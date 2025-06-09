@@ -1,0 +1,242 @@
+{% extends 'tournaments/layout/layout.html' %}
+{% block title %}{{ tournament.name }} Details{% endblock %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        {% if edit_mode %}
+                            <form method="post"
+                                  action="{% url 'update_tournament' tournament.id %}"
+                                  class="w-100 d-flex justify-content-between align-items-center">
+                                {% csrf_token %}
+                                <input type="text"
+                                       name="name"
+                                       value="{{ tournament.name }}"
+                                       class="form-control form-control-lg"
+                                       required>
+                                <div class="d-flex">
+                                    <button type="submit" class="btn btn-success ms-2">Save</button>
+                                    <a href="{% url 'tournament_detail' tournament.id %}"
+                                       class="btn btn-secondary ms-2">Cancel</a>
+                                </div>
+                            </form>
+                        {% else %}
+                            <h2>{{ tournament.name }}</h2>
+                            {% if user.is_staff %}
+                                <div>
+                                    <a href="?edit_tournament=true" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i> Edit Tournament
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal">Delete Tournament</button>
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade"
+                                         id="deleteModal"
+                                         tabindex="-1"
+                                         aria-labelledby="deleteModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                                    <button type="button"
+                                                            class="btn-close"
+                                                            data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete the tournament "{{ tournament.name }}"? This action cannot be undone.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="badge {% if tournament.is_active %}bg-success{% else %}bg-secondary{% endif %} ms-2">
+                                        {{ tournament.is_active|yesno:"Active,Inactive" }}
+                                    </span>
+                                </div>
+                            {% else %}
+                                <span class="badge {% if tournament.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ tournament.is_active|yesno:"Active,Inactive" }}
+                                </span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% if edit_mode and user.is_staff %}
+                                    <form method="post"
+                                          action="{% url 'update_tournament' tournament.id %}"
+                                          class="mb-3">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="current_stage" class="form-label">Current Stage</label>
+                                            <select name="current_stage" id="current_stage" class="form-select">
+                                                <option value="1" {% if tournament.current_stage == 1 %}selected{% endif %}>Stage 1</option>
+                                                <option value="2" {% if tournament.current_stage == 2 %}selected{% endif %}>Stage 2</option>
+                                                <option value="3" {% if tournament.current_stage == 3 %}selected{% endif %}>Stage 3</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="start_date" class="form-label">Start Date</label>
+                                            <input type="date"
+                                                   name="start_date"
+                                                   id="start_date"
+                                                   class="form-control"
+                                                   value="{{ tournament.start_date|date:'Y-m-d' }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="end_date" class="form-label">End Date</label>
+                                            <input type="date"
+                                                   name="end_date"
+                                                   id="end_date"
+                                                   class="form-control"
+                                                   value="{{ tournament.end_date|date:'Y-m-d' }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="number_of_teams" class="form-label">Max Teams</label>
+                                            <input type="number"
+                                                   name="number_of_teams"
+                                                   id="number_of_teams"
+                                                   class="form-control"
+                                                   value="{{ tournament.number_of_teams }}"
+                                                   min="2"
+                                                   max="32">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </form>
+                                {% else %}
+                                    <ul class="list-group list-group-flush mb-3">
+                                        <li class="list-group-item">
+                                            <strong>Current Stage:</strong> {{ tournament.current_stage }}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Start Date:</strong> {{ tournament.start_date|date:"F j, Y" }}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>End Date:</strong> {{ tournament.end_date|date:"F j, Y" }}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Teams:</strong> {{ tournament.number_of_teams }}
+                                        </li>
+                                    </ul>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Current Standings</h4>
+                                <div class="alert alert-info">Stage {{ tournament.current_stage }} in progress</div>
+                                <a href="{% url 'tier_list' tournament.id %}" class="btn btn-primary">Create Tier List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Teams Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h3>Participating Teams</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if teams %}
+                            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+                                {% for team in teams %}
+                                    <div class="col">{% include "tournaments/partials/team_card.html" with team=team %}</div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">No teams have been added to this tournament yet.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Matches Section -->
+                <div class="card mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h3>Matches</h3>
+                        <div class="btn-group">
+                            <button type="button"
+                                    class="btn btn-outline-light dropdown-toggle"
+                                    data-bs-toggle="dropdown">Filter by Stage</button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="?stage=all">All Stages</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="?stage=1">Stage 1</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="?stage=2">Stage 2</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="?stage=3">Stage 3</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if matches %}
+                            <div class="table-responsive">
+                                <table class="table table-light table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Match #</th>
+                                            <th>Stage</th>
+                                            <th>Team 1</th>
+                                            <th>Score</th>
+                                            <th>Team 2</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for match in matches %}
+                                            <tr>
+                                                <td>{{ match.match_number }}</td>
+                                                <td>{{ match.get_stage_display }}</td>
+                                                <td>{{ match.team1.team_name }}</td>
+                                                <td>
+                                                    {% if match.status == 'completed' %}
+                                                        <span class="badge bg-primary">{{ match.team1_score }} - {{ match.team2_score }}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">vs</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ match.team2.team_name }}</td>
+                                                <td>
+                                                    <span class="badge {% if match.status == 'scheduled' %}bg-secondary {% elif match.status == 'live' %}bg-danger {% else %}bg-success{% endif %}">
+                                                        {{ match.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    {% if match.match_date %}
+                                                        {{ match.match_date|date:"M d, H:i" }}
+                                                    {% else %}
+                                                        TBD
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'match_details' match.id %}"
+                                                       class="btn btn-sm btn-outline-primary">View</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">No matches are scheduled for this tournament yet.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

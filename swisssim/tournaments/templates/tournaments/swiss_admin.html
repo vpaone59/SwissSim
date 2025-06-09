@@ -1,0 +1,326 @@
+{% extends "tournaments/layout/layout.html" %}
+{% load static %}
+{% block title %}Tournament Admin{% endblock %}
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">CS2 Tournament Admin</h1>
+        {% if messages %}
+            <div class="messages mb-4">
+                {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+            </div>
+        {% endif %}
+        <!-- Current Tournament Information -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary ">
+                <h2 class="h4 mb-0">Current Tournament</h2>
+            </div>
+            <div class="card-body">
+                {% if current_tournament %}
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3>{{ current_tournament.name }}</h3>
+                            <p>
+                                <strong>Current Stage:</strong> {{ current_tournament.current_stage }}
+                            </p>
+                            <p>
+                                <strong>Start Date:</strong> {{ current_tournament.start_date }}
+                            </p>
+                            <p>
+                                <strong>End Date:</strong> {{ current_tournament.end_date }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center justify-content-end">
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="advance_stage">
+                                <button type="submit" class="btn btn-warning">Advance to Next Stage</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No active tournament. Create one below.</p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Create Tournament Form -->
+        <div class="card mb-4">
+            <div class="card-header bg-success ">
+                <h2 class="h4 mb-0">Create New Tournament</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="create_tournament">
+                    <div class="mb-3">
+                        <label for="tournament_name" class="form-label">Tournament Name</label>
+                        <input type="text"
+                               class="form-control"
+                               id="tournament_name"
+                               name="tournament_name"
+                               required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="start_date"
+                                   name="start_date"
+                                   required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="end_date"
+                                   name="end_date"
+                                   required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Create Tournament</button>
+                </form>
+            </div>
+        </div>
+        <!-- Team Management -->
+        <div class="card mb-4">
+            <div class="card-header bg-info ">
+                <h2 class="h4 mb-0">Team Management</h2>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="teamTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active"
+                                id="add-team-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#add-team"
+                                type="button"
+                                role="tab"
+                                aria-controls="add-team"
+                                aria-selected="true">Add Team</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link"
+                                id="view-teams-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#view-teams"
+                                type="button"
+                                role="tab"
+                                aria-controls="view-teams"
+                                aria-selected="false">View Teams</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="teamTabsContent">
+                    <!-- Add Team Form -->
+                    <div class="tab-pane fade show active"
+                         id="add-team"
+                         role="tabpanel"
+                         aria-labelledby="add-team-tab">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="add_team">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="team_name" class="form-label">Team Name</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="team_name"
+                                           name="team_name"
+                                           required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="team_id" class="form-label">Team ID (Optional)</label>
+                                    <input type="text" class="form-control" id="team_id" name="team_id">
+                                    <small class="text-muted">If blank, will be generated from team name</small>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="seed" class="form-label">Seed</label>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="seed"
+                                           name="seed"
+                                           min="1"
+                                           value="1">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Team</button>
+                        </form>
+                    </div>
+                    <!-- View Teams List -->
+                    <div class="tab-pane fade"
+                         id="view-teams"
+                         role="tabpanel"
+                         aria-labelledby="view-teams-tab">
+                        {% if all_teams %}
+                            <div class="table-responsive">
+                                <table class="table table-light table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Seed</th>
+                                            <th>Record</th>
+                                            <th>Buchholz</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for team in all_teams %}
+                                            <tr>
+                                                <td>{{ team.team_id }}</td>
+                                                <td>{{ team.team_name }}</td>
+                                                <td>{{ team.seed }}</td>
+                                                <td>{{ team.wins }}-{{ team.losses }}</td>
+                                                <td>{{ team.buchholz_score }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p>
+                                <strong>Total Teams:</strong> {{ all_teams.count }}
+                            </p>
+                        {% else %}
+                            <p class="text-muted">No teams have been added yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Match Management -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary ">
+                <h2 class="h4 mb-0">Match Management</h2>
+            </div>
+            <div class="card-body">
+                {% if current_tournament %}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h4>Current Stage: {{ current_tournament.current_stage }}</h4>
+                            <p>Set match results below to update team records and Buchholz scores.</p>
+                        </div>
+                    </div>
+                    <h4>Current Matches</h4>
+                    {% if matches %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Match #</th>
+                                        <th>Team 1</th>
+                                        <th>Score</th>
+                                        <th>Team 2</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for match in matches %}
+                                        <tr>
+                                            <td>{{ match.match_number }}</td>
+                                            <td>{{ match.team1.team_name }}</td>
+                                            <td>
+                                                {% if match.status == 'completed' %}
+                                                    {{ match.team1_score }} - {{ match.team2_score }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ match.team2.team_name }}</td>
+                                            <td>
+                                                {% if match.status == 'live' %}
+                                                    <span class="badge bg-danger">LIVE</span>
+                                                {% elif match.status == 'completed' %}
+                                                    <span class="badge bg-success">Completed</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ match.status|title }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-primary"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editMatch{{ match.id }}">Edit</button>
+                                                <!-- Edit Match Modal -->
+                                                <div class="modal fade"
+                                                     id="editMatch{{ match.id }}"
+                                                     tabindex="-1"
+                                                     aria-labelledby="editMatchLabel{{ match.id }}"
+                                                     aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editMatchLabel{{ match.id }}">Edit Match #{{ match.match_number }}</h5>
+                                                                <button type="button"
+                                                                        class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                            </div>
+                                                            <form method="post">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="action" value="update_match">
+                                                                <input type="hidden" name="match_id" value="{{ match.id }}">
+                                                                <div class="modal-body">
+                                                                    <div class="row mb-3">
+                                                                        <div class="col-5">
+                                                                            <label class="form-label">{{ match.team1.team_name }}</label>
+                                                                            <input type="number"
+                                                                                   class="form-control"
+                                                                                   name="team1_score"
+                                                                                   value="{{ match.team1_score }}"
+                                                                                   min="0">
+                                                                        </div>
+                                                                        <div class="col-2 d-flex align-items-end justify-content-center">
+                                                                            <span class="h3">vs</span>
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <label class="form-label">{{ match.team2.team_name }}</label>
+                                                                            <input type="number"
+                                                                                   class="form-control"
+                                                                                   name="team2_score"
+                                                                                   value="{{ match.team2_score }}"
+                                                                                   min="0">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="status{{ match.id }}" class="form-label">Status</label>
+                                                                        <select class="form-control" id="status{{ match.id }}" name="status">
+                                                                            <option value="scheduled"
+                                                                                    {% if match.status == 'scheduled' %}selected{% endif %}>
+                                                                                Scheduled
+                                                                            </option>
+                                                                            <option value="live" {% if match.status == 'live' %}selected{% endif %}>Live</option>
+                                                                            <option value="completed"
+                                                                                    {% if match.status == 'completed' %}selected{% endif %}>
+                                                                                Completed
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No matches found for the current stage. Generate matches using the form above.</div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-warning">Please create a tournament first.</div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Navigation Links -->
+        <div class="text-center mt-4">
+            <a href="{% url 'tournament_home' %}" class="btn btn-outline-primary">View Tournament</a>
+            <a href="{% url 'standings' %}" class="btn btn-outline-secondary">View Standings</a>
+        </div>
+    </div>
+{% endblock %}

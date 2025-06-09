@@ -1,0 +1,22 @@
+<table class="table table-light table-hover">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Team</th>
+            <th>Record</th>
+            <th>Buchholz Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for team in teams %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <a href="{% url 'team_detail' team.team_id %}" class="">{{ team.team_name }}</a>
+                </td>
+                <td>{{ team.wins }}-{{ team.losses }}</td>
+                <td>{{ team.buchholz_score }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

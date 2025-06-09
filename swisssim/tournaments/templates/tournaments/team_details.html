@@ -1,0 +1,140 @@
+{% extends "tournaments/layout/layout.html" %}
+{% load static %}
+{% block title %}{{ team.team_name }} - CS2 Tournament{% endblock %}
+{% block content %}
+    <div class="container  py-4">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-light border-secondary">
+                    <div class="card-header d-flex align-items-center">
+                        {% if not edit_mode %}
+                            <h1 class="h2 mb-0">{{ team.team_name }}</h1>
+                            {% if user.is_staff %}
+                                <a href="?edit_team_name=true" class="ms-2 " title="Edit team name">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <form hx-post="{% url 'update_team_name' team.team_id %}"
+                                  hx-swap="outerHTML"
+                                  class="d-flex w-100">
+                                {% csrf_token %}
+                                <input type="text"
+                                       name="team_name"
+                                       value="{{ team.team_name }}"
+                                       class="form-control form-control-lg bg-light "
+                                       required>
+                                <button type="submit" class="btn btn-success ms-2">Save</button>
+                                <a href="{% url 'team_detail' team.team_id %}"
+                                   class="btn btn-secondary ms-2 d-flex align-items-center">Cancel</a>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center mb-4">
+                                    {% if team.team_logo %}
+                                        <img src="{{ team.team_logo }}"
+                                             alt="{{ team.team_name }} Logo"
+                                             class="img-fluid mb-3"
+                                             style="max-height: 150px">
+                                    {% else %}
+                                        <div class="bg-secondary rounded p-4 mb-3 d-flex align-items-center justify-content-center"
+                                             style="height: 150px">
+                                            <span class="display-4">{{ team.team_name|slice:":1" }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="team-stats">
+                                    <h4>Team Stats</h4>
+                                    <table class="table table-light table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th>Seed:</th>
+                                                <td>{{ team.seed }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Record:</th>
+                                                <td>{{ team.wins }}-{{ team.losses }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Buchholz Score:</th>
+                                                <td>{{ team.buchholz_score }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h4>Match History</h4>
+                                {% if matches %}
+                                    <div class="table-responsive">
+                                        <table class="table table-light table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Stage</th>
+                                                    <th>Match</th>
+                                                    <th>Opponent</th>
+                                                    <th>Result</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for match in matches %}
+                                                    <tr>
+                                                        <td>{{ match.get_stage_display }}</td>
+                                                        <td>#{{ match.match_number }}</td>
+                                                        <td>
+                                                            {% if match.team1 == team %}
+                                                                <a href="{% url 'team_detail' match.team2.team_id %}" class="">{{ match.team2.team_name }}</a>
+                                                            {% else %}
+                                                                <a href="{% url 'team_detail' match.team1.team_id %}" class="">{{ match.team1.team_name }}</a>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if match.status == 'completed' %}
+                                                                {% if match.team1 == team %}
+                                                                    {{ match.team1_score }} - {{ match.team2_score }}
+                                                                {% else %}
+                                                                    {{ match.team2_score }} - {{ match.team1_score }}
+                                                                {% endif %}
+                                                                {% if match.winner == team %}
+                                                                    <span class="badge bg-success">Win</span>
+                                                                {% elif match.winner %}
+                                                                    <span class="badge bg-danger">Loss</span>
+                                                                {% else %}
+                                                                    <span class="badge bg-secondary">Draw</span>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                -
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if match.status == 'live' %}
+                                                                <span class="badge bg-danger">LIVE</span>
+                                                            {% elif match.status == 'completed' %}
+                                                                <span class="badge bg-success">Completed</span>
+                                                            {% else %}
+                                                                <span class="badge bg-secondary">{{ match.status|title }}</span>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">No matches found for this team.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="{% url 'tournament_home' %}" class="btn btn-outline-light">Back to Tournament</a>
+        </div>
+    </div>
+{% endblock %}

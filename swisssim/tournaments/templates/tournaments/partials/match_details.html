@@ -1,0 +1,17 @@
+<div class="match-details-container p-2 border border-secondary rounded">
+    <h5>{{ match.team1.team_name }} vs {{ match.team2.team_name }}</h5>
+    <div class="team-comparison">
+        <div class="row">
+            <div class="col-6">
+                <h6>{{ match.team1.team_name }}</h6>
+                <p>Record: {{ match.team1.wins }}-{{ match.team1.losses }}</p>
+                <p>Buchholz: {{ match.team1.buchholz_score }}</p>
+            </div>
+            <div class="col-6">
+                <h6>{{ match.team2.team_name }}</h6>
+                <p>Record: {{ match.team2.wins }}-{{ match.team2.losses }}</p>
+                <p>Buchholz: {{ match.team2.buchholz_score }}</p>
+            </div>
+        </div>
+    </div>
+</div>

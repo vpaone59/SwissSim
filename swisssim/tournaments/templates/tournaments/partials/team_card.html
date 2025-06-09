@@ -1,0 +1,23 @@
+<div class="team-card card h-100" data-team-id="{{ team.team_id }}">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{% url 'team_detail' team.team_id %}" class="team-name-link">{{ team.team_name }}</a>
+        </h5>
+        <p class="card-text">Seed: {{ team.seed }}</p>
+        {% if team.team_logo %}
+            <img src="{{ team.team_logo }}"
+                 alt="{{ team.team_name }} Logo"
+                 class="img-fluid mb-2"
+                 style="max-height: 50px">
+        {% else %}
+            <div class="bg-secondary rounded p-2 mb-2 d-flex align-items-center justify-content-center text-white"
+                 style="height: 50px;
+                        width: 50px">
+                <span class="h4 mb-0">{{ team.team_name|slice:":1" }}</span>
+            </div>
+        {% endif %}
+        <p class="card-text">
+            <small class="text-muted">Record: {{ team.wins }}-{{ team.losses }}</small>
+        </p>
+    </div>
+</div>

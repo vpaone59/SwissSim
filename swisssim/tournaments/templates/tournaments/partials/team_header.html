@@ -1,0 +1,8 @@
+<div class="card-header d-flex align-items-center">
+    <h1 class="h2 mb-0">{{ team.team_name }}</h1>
+    {% if user.is_staff %}
+        <a href="?edit_team_name=true" class="ms-2 " title="Edit team name">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+    {% endif %}
+</div>

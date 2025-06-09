@@ -1,0 +1,48 @@
+.tier-label {
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.tier-s {
+    background-color: #FF7F7F;
+}
+
+.tier-a {
+    background-color: #FFBF7F;
+}
+
+.tier-b {
+    background-color: #FFFF7F;
+}
+
+.tier-c {
+    background-color: #7FFF7F;
+}
+
+.tier-d {
+    background-color: #7FBFFF;
+}
+
+.tier-f {
+    background-color: #BF7FFF;
+}
+
+.team-card {
+    cursor: move;
+    transition: transform 0.2s;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dragging {
+    opacity: 0.5;
+    transform: scale(0.95) !important;
+}
+
+.dragover {
+    background-color: rgba(0, 0, 0, 0.05);
+}

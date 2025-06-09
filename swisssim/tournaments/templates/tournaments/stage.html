@@ -1,0 +1,131 @@
+{% extends "tournaments/layout/layout.html" %}
+{% load static %}
+{% block title %}Stage {{ stage }} - CS2 Tournament{% endblock %}
+{% block content %}
+    <div class="container  py-4">
+        <h1 class="text-center mb-4">CS2 Major Tournament</h1>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-light border-secondary">
+                    <div class="card-header">
+                        <h2 class="h3">Stage {{ stage }} - Swiss Bracket</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'stage_view' 1 %}"
+                                   class="btn btn-outline-light {% if stage == 1 %}active{% endif %}">Stage 1</a>
+                                <a href="{% url 'stage_view' 2 %}"
+                                   class="btn btn-outline-light {% if stage == 2 %}active{% endif %}">Stage 2</a>
+                                <a href="{% url 'stage_view' 3 %}"
+                                   class="btn btn-outline-light {% if stage == 3 %}active{% endif %}">Stage 3</a>
+                            </div>
+                        </div>
+                        {% if matches %}
+                            <div class="table-responsive">
+                                <table class="table table-light table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Match</th>
+                                            <th class="text-end">Team 1</th>
+                                            <th class="text-center">vs</th>
+                                            <th>Team 2</th>
+                                            <th>Status</th>
+                                            <th>Prediction</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for match in matches %}
+                                            <tr id="match-row-{{ match.id }}">
+                                                <td>#{{ match.match_number }}</td>
+                                                <td class="text-end">
+                                                    <a href="{% url 'team_detail' match.team1.team_id %}" class="">{{ match.team1.team_name }}</a>
+                                                    <span class="badge bg-secondary">{{ match.team1.wins }}-{{ match.team1.losses }}</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    {% if match.status == 'completed' %}
+                                                        {{ match.team1_score }} - {{ match.team2_score }}
+                                                    {% else %}
+                                                        vs
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'team_detail' match.team2.team_id %}" class="">{{ match.team2.team_name }}</a>
+                                                    <span class="badge bg-secondary">{{ match.team2.wins }}-{{ match.team2.losses }}</span>
+                                                </td>
+                                                <td>
+                                                    {% if match.status == 'live' %}
+                                                        <span class="badge bg-danger">LIVE</span>
+                                                    {% elif match.status == 'completed' %}
+                                                        <span class="badge bg-success">Completed</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ match.status|title }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if match.status != 'completed' %}
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary"
+                                                                    hx-get="{% url 'match_details' match.id %}"
+                                                                    hx-target="#match-details-{{ match.id }}"
+                                                                    hx-swap="innerHTML"
+                                                                    hx-trigger="click"
+                                                                    onclick="this.classList.add('btn-primary'); this.classList.remove('btn-outline-primary'); this.nextElementSibling.classList.add('btn-outline-primary'); this.nextElementSibling.classList.remove('btn-primary');">
+                                                                {{ match.team1.team_name }}
+                                                            </button>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary"
+                                                                    hx-get="{% url 'match_details' match.id %}"
+                                                                    hx-target="#match-details-{{ match.id }}"
+                                                                    hx-swap="innerHTML"
+                                                                    hx-trigger="click"
+                                                                    onclick="this.classList.add('btn-primary'); this.classList.remove('btn-outline-primary'); this.previousElementSibling.classList.add('btn-outline-primary'); this.previousElementSibling.classList.remove('btn-primary');">
+                                                                {{ match.team2.team_name }}
+                                                            </button>
+                                                        </div>
+                                                        <div id="match-details-{{ match.id }}" class="mt-2"></div>
+                                                    {% else %}
+                                                        {% if match.winner %}
+                                                            <span>Winner: {{ match.winner.team_name }}</span>
+                                                        {% else %}
+                                                            <span>Draw</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">No matches scheduled for this stage yet.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card bg-light border-secondary">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h2 class="h3 mb-0">Current Standings</h2>
+                        <button class="btn btn-sm btn-outline-light"
+                                hx-get="{% url 'standings' %}"
+                                hx-target="#standings-table-container"
+                                hx-swap="innerHTML"
+                                hx-trigger="click">Refresh</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="standings-table-container" class="table-responsive">
+                            {% include "tournaments/partials/standings_table.html" with teams=teams %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'tournament_home' %}" class="btn btn-outline-light">Back to Tournament Home</a>
+        </div>
+    </div>
+{% endblock %}
