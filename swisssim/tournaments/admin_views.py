@@ -54,14 +54,11 @@ def swiss_admin(request):
                 # Add a new team
                 team_name = request.POST.get("team_name")
                 team_id = request.POST.get("team_id", "")
-                seed = request.POST.get("seed", 0)
 
                 if not team_id:
                     team_id = "".join(team_name.split()).lower()[:32]
 
-                team = Team.objects.create(
-                    team_id=team_id, team_name=team_name, seed=seed
-                )
+                team = Team.objects.create(team_id=team_id, team_name=team_name)
 
                 messages.success(request, f"Team '{team_name}' added successfully.")
                 return HttpResponseRedirect(reverse("swiss_admin"))

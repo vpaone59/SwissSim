@@ -18,9 +18,10 @@
                 integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
                 crossorigin="anonymous"></script>
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-        <script src="{% static 'tournaments/js/tier_list.js' %}"></script>
     </head>
-    <body id="main-body" class="bg-light">
+    <body id="main-body"
+          class="bg-light"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <main id="main-content">
             {% include 'tournaments/layout/header.html' %}
             {% block content_header %}{% endblock %}

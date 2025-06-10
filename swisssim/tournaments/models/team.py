@@ -7,7 +7,7 @@ class Team(models.Model):
     team_id = models.CharField(max_length=32, unique=True)
     team_name = models.CharField(max_length=255)
     team_logo = models.URLField(blank=True, null=True)
-    seed = models.IntegerField(default=0)
+    region = models.CharField(max_length=50, default="Europe")
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     buchholz_score = models.FloatField(default=0.0)

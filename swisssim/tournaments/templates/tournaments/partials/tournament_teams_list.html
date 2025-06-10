@@ -1,0 +1,41 @@
+{% for tournament_team in tournament_teams %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <span class="fw-bold">{{ tournament_team.team.team_name }}</span>
+            <small class="text-muted ms-2">{{ tournament_team.team.region }}</small>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="input-group input-group-sm me-2" style="width: 120px;">
+                <span class="input-group-text">Seed</span>
+                <input type="number"
+                       class="form-control"
+                       value="{{ tournament_team.seed }}"
+                       min="1"
+                       hx-post="{% url 'update_team_seed' tournament.id tournament_team.team.id %}"
+                       hx-trigger="change"
+                       hx-vals='{"seed": this.value}'>
+            </div>
+            <select class="form-select form-select-sm me-2"
+                    style="width: 100px"
+                    hx-post="{% url 'update_team_stage' tournament.id tournament_team.team.id %}"
+                    hx-trigger="change"
+                    hx-vals='{"starting_stage": this.value}'>
+                <option value="1"
+                        {% if tournament_team.starting_stage == 1 %}selected{% endif %}>Stage 1</option>
+                <option value="2"
+                        {% if tournament_team.starting_stage == 2 %}selected{% endif %}>Stage 2</option>
+                <option value="3"
+                        {% if tournament_team.starting_stage == 3 %}selected{% endif %}>Stage 3</option>
+            </select>
+            <button class="btn btn-sm btn-danger"
+                    hx-post="{% url 'remove_team_from_tournament' tournament.id tournament_team.team.id %}"
+                    hx-swap="outerHTML"
+                    hx-target="#availableTeamsList, #tournamentTeamsList"
+                    title="Remove from tournament">
+                <i class="bi bi-dash-lg"></i>
+            </button>
+        </div>
+    </div>
+{% empty %}
+    <div class="list-group-item text-center text-muted">No teams in tournament</div>
+{% endfor %}

@@ -3,7 +3,6 @@
         <h5 class="card-title">
             <a href="{% url 'team_detail' team.team_id %}" class="team-name-link">{{ team.team_name }}</a>
         </h5>
-        <p class="card-text">Seed: {{ team.seed }}</p>
         {% if team.team_logo %}
             <img src="{{ team.team_logo }}"
                  alt="{{ team.team_name }} Logo"

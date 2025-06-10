@@ -1,0 +1,9 @@
+{% if teams %}
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for team in teams %}
+            <div class="col">{% include "tournaments/partials/team_card.html" with team=team %}</div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-warning">No teams have been added to this tournament yet.</div>
+{% endif %}

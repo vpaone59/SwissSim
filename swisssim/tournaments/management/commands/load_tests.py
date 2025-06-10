@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # Create tournament
         tournament, created = Tournament.objects.get_or_create(
-            name="Test Tournament",
+            name="Austin Major 2025",
             defaults={
                 "current_stage": 1,
                 "is_active": True,
@@ -26,40 +26,115 @@ class Command(BaseCommand):
             )
         )
 
-        # Create teams (32 teams)
+        # Create teams using actual Austin Major 2025 teams
         teams_data = [
-            {"team_id": "1", "team_name": "Cloud9", "seed": 1},
-            {"team_id": "2", "team_name": "FaZe Clan", "seed": 2},
-            {"team_id": "3", "team_name": "Natus Vincere", "seed": 3},
-            {"team_id": "4", "team_name": "Team Liquid", "seed": 4},
-            {"team_id": "5", "team_name": "G2 Esports", "seed": 5},
-            {"team_id": "6", "team_name": "Heroic", "seed": 6},
-            {"team_id": "7", "team_name": "Astralis", "seed": 7},
-            {"team_id": "8", "team_name": "Vitality", "seed": 8},
-            {"team_id": "9", "team_name": "OG", "seed": 9},
-            {"team_id": "10", "team_name": "Fnatic", "seed": 10},
-            {"team_id": "11", "team_name": "ENCE", "seed": 11},
-            {"team_id": "12", "team_name": "MOUZ", "seed": 12},
-            {"team_id": "13", "team_name": "BIG", "seed": 13},
-            {"team_id": "14", "team_name": "NiP", "seed": 14},
-            {"team_id": "15", "team_name": "Spirit", "seed": 15},
-            {"team_id": "16", "team_name": "FURIA Esports", "seed": 16},
-            {"team_id": "17", "team_name": "Complexity Gaming", "seed": 17},
-            {"team_id": "18", "team_name": "Evil Geniuses", "seed": 18},
-            {"team_id": "19", "team_name": "Liquid Academy", "seed": 19},
-            {"team_id": "20", "team_name": "Renegades", "seed": 20},
-            {"team_id": "21", "team_name": "Tyloo", "seed": 21},
-            {"team_id": "22", "team_name": "#Unknown Team A#", "seed": 22},
-            {"team_id": "23", "team_name": "#Unknown Team B#", "seed": 23},
-            {"team_id": "24", "team_name": "#Unknown Team C#", "seed": 24},
-            {"team_id": "25", "team_name": "#Unknown Team D#", "seed": 25},
-            {"team_id": "26", "team_name": "#Unknown Team E#", "seed": 26},
-            {"team_id": "27", "team_name": "#Unknown Team F#", "seed": 27},
-            {"team_id": "28", "team_name": "#Unknown Team G#", "seed": 28},
-            {"team_id": "29", "team_name": "#Unknown Team H#", "seed": 29},
-            {"team_id": "30", "team_name": "#Unknown Team I#", "seed": 30},
-            {"team_id": "31", "team_name": "#Unknown Team J#", "seed": 31},
-            {"team_id": "32", "team_name": "#Unknown Team K#", "seed": 32},
+            # Europe (16 teams)
+            {
+                "team_id": "1",
+                "team_name": "Team Vitality",
+                "region": "Europe",
+            },
+            {"team_id": "2", "team_name": "MOUZ", "region": "Europe"},
+            {"team_id": "3", "team_name": "Team Spirit", "region": "Europe"},
+            {
+                "team_id": "4",
+                "team_name": "Aurora Gaming",
+                "region": "Europe",
+            },
+            {
+                "team_id": "5",
+                "team_name": "Natus Vincere",
+                "region": "Europe",
+            },
+            {"team_id": "6", "team_name": "G2 Esports", "region": "Europe"},
+            {
+                "team_id": "7",
+                "team_name": "Team Falcons",
+                "region": "Europe",
+            },
+            {"team_id": "8", "team_name": "FaZe Clan", "region": "Europe"},
+            {"team_id": "9", "team_name": "3DMAX", "region": "Europe"},
+            {
+                "team_id": "10",
+                "team_name": "Virtus.pro",
+                "region": "Europe",
+            },
+            {"team_id": "11", "team_name": "HEROIC", "region": "Europe"},
+            {
+                "team_id": "12",
+                "team_name": "OG Esports",
+                "region": "Europe",
+            },
+            {
+                "team_id": "13",
+                "team_name": "Nemiga Gaming",
+                "region": "Europe",
+            },
+            {
+                "team_id": "14",
+                "team_name": "BetBoom Team",
+                "region": "Europe",
+            },
+            {"team_id": "15", "team_name": "Metizport", "region": "Europe"},
+            {
+                "team_id": "16",
+                "team_name": "B8 Esports",
+                "region": "Europe",
+            },
+            # Americas (11 teams)
+            {
+                "team_id": "17",
+                "team_name": "Team Liquid",
+                "region": "Americas",
+            },
+            {
+                "team_id": "18",
+                "team_name": "paiN Gaming",
+                "region": "Americas",
+            },
+            {
+                "team_id": "19",
+                "team_name": "FURIA Esports",
+                "region": "Americas",
+            },
+            {"team_id": "20", "team_name": "MIBR", "region": "Americas"},
+            {"team_id": "21", "team_name": "M80", "region": "Americas"},
+            {
+                "team_id": "22",
+                "team_name": "Imperial Esports",
+                "region": "Americas",
+            },
+            {
+                "team_id": "23",
+                "team_name": "Complexity Gaming",
+                "region": "Americas",
+            },
+            {"team_id": "24", "team_name": "Fluxo", "region": "Americas"},
+            {
+                "team_id": "25",
+                "team_name": "Wildcard",
+                "region": "Americas",
+            },
+            {
+                "team_id": "26",
+                "team_name": "NRG Esports",
+                "region": "Americas",
+            },
+            {"team_id": "27", "team_name": "Legacy", "region": "Americas"},
+            # Asia (5 teams)
+            {"team_id": "28", "team_name": "The MongolZ", "region": "Asia"},
+            {
+                "team_id": "29",
+                "team_name": "Lynn Vision Gaming",
+                "region": "Asia",
+            },
+            {"team_id": "30", "team_name": "FlyQuest", "region": "Asia"},
+            {
+                "team_id": "31",
+                "team_name": "Chinggis Warriors",
+                "region": "Asia",
+            },
+            {"team_id": "32", "team_name": "TYLOO", "region": "Asia"},
         ]
 
         teams_created = 0
@@ -68,13 +143,19 @@ class Command(BaseCommand):
                 team_id=team_data["team_id"],
                 defaults={
                     "team_name": team_data["team_name"],
-                    "seed": team_data["seed"],
+                    "region": team_data.get("region", ""),
                 },
             )
             if created:
                 teams_created += 1
+            else:
+                # Update existing team data
+                team.team_name = team_data["team_name"]
+                if "region" in team_data and hasattr(team, "region"):
+                    team.region = team_data["region"]
+                team.save()
 
-        self.stdout.write(self.style.SUCCESS(f"Created {teams_created} teams"))
+        self.stdout.write(self.style.SUCCESS(f"Created/updated {teams_created} teams"))
 
         # Generate initial matches
         generate_next_stage_matches(1)

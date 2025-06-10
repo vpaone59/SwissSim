@@ -141,10 +141,15 @@
                 </div>
                 <!-- Teams Section -->
                 <div class="card mb-4">
-                    <div class="card-header bg-light">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h3>Participating Teams</h3>
+                        {% if user.is_staff %}
+                            <button class="btn btn-primary"
+                                    hx-get="{% url 'manage_tournament_teams' tournament.id %}"
+                                    hx-target="#teamsManagementSection">Manage Teams</button>
+                        {% endif %}
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="teamsManagementSection">
                         {% if teams %}
                             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
                                 {% for team in teams %}
@@ -153,86 +158,6 @@
                             </div>
                         {% else %}
                             <div class="alert alert-warning">No teams have been added to this tournament yet.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <!-- Matches Section -->
-                <div class="card mb-4">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h3>Matches</h3>
-                        <div class="btn-group">
-                            <button type="button"
-                                    class="btn btn-outline-light dropdown-toggle"
-                                    data-bs-toggle="dropdown">Filter by Stage</button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="?stage=all">All Stages</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="?stage=1">Stage 1</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="?stage=2">Stage 2</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="?stage=3">Stage 3</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {% if matches %}
-                            <div class="table-responsive">
-                                <table class="table table-light table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Match #</th>
-                                            <th>Stage</th>
-                                            <th>Team 1</th>
-                                            <th>Score</th>
-                                            <th>Team 2</th>
-                                            <th>Status</th>
-                                            <th>Date</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for match in matches %}
-                                            <tr>
-                                                <td>{{ match.match_number }}</td>
-                                                <td>{{ match.get_stage_display }}</td>
-                                                <td>{{ match.team1.team_name }}</td>
-                                                <td>
-                                                    {% if match.status == 'completed' %}
-                                                        <span class="badge bg-primary">{{ match.team1_score }} - {{ match.team2_score }}</span>
-                                                    {% else %}
-                                                        <span class="badge bg-secondary">vs</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ match.team2.team_name }}</td>
-                                                <td>
-                                                    <span class="badge {% if match.status == 'scheduled' %}bg-secondary {% elif match.status == 'live' %}bg-danger {% else %}bg-success{% endif %}">
-                                                        {{ match.get_status_display }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {% if match.match_date %}
-                                                        {{ match.match_date|date:"M d, H:i" }}
-                                                    {% else %}
-                                                        TBD
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    <a href="{% url 'match_details' match.id %}"
-                                                       class="btn btn-sm btn-outline-primary">View</a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <div class="alert alert-warning">No matches are scheduled for this tournament yet.</div>
                         {% endif %}
                     </div>
                 </div>
